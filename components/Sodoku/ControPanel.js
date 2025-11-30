@@ -1,13 +1,14 @@
+
+
+
 // import React from 'react';
 // import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
 // import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
-// // Get the available width for the control panel
 // const { width } = Dimensions.get('window');
 // const controlPanelWidth = Math.min(width * 0.95, 450);
-
 // const numberOfButtons = 5;
-// const cellSize = controlPanelWidth / (numberOfButtons + 3.5); 
+// const cellSize = controlPanelWidth / (numberOfButtons + 2);
 
 // export const ControlPanel = ({
 //     onNewGame,
@@ -19,15 +20,14 @@
 //     hintsLeft,
 //     selectedCell
 // }) => {
-//     // Helper function to keep the JSX clean
-//     const renderControlButton = ({ onPress, disabled, iconName, label, IconComponent = MaterialCommunityIcons }) => (
+//     const renderControlButton = ({ onPress, disabled, iconName, label, IconComponent = MaterialCommunityIcons, isReward = false }) => (
 //         <TouchableOpacity
-//             style={[styles.controlButton, disabled && styles.disabledButton]}
+//             style={[styles.controlButton, isReward && styles.rewardButton, disabled && styles.disabledButton]}
 //             onPress={onPress}
 //             disabled={disabled}
 //         >
-//             <IconComponent name={iconName} size={cellSize * 0.5} color={disabled ? '#b0b0b0' : '#424242'} />
-//             <Text style={[styles.controlLabel, disabled && styles.disabledLabel]}>{label}</Text>
+//             <IconComponent name={iconName} size={cellSize * 0.5} color={isReward ? '#4CAF50' : (disabled ? '#b0b0b0' : '#424242')} />
+//             <Text style={[styles.controlLabel, isReward && styles.rewardLabel, disabled && styles.disabledLabel]}>{label}</Text>
 //         </TouchableOpacity>
 //     );
 
@@ -45,12 +45,25 @@
 //                 iconName: 'eraser',
 //                 label: 'Erase'
 //             })}
-//             {renderControlButton({
-//                 onPress: onHint,
-//                 iconName: 'lightbulb-on-outline',
-//                 label: `Hint (${hintsLeft})`
-//             })}
-//              {renderControlButton({
+            
+//             {/* --- THIS IS THE KEY CHANGE --- */}
+//             {/* We now check if hintsLeft is 0. If so, we render a different style of button. */}
+//             {hintsLeft > 0 ? (
+//                 renderControlButton({
+//                     onPress: onHint,
+//                     iconName: 'lightbulb-on-outline',
+//                     label: `Hint (${hintsLeft})`
+//                 })
+//             ) : (
+//                 renderControlButton({
+//                     onPress: onHint,
+//                     iconName: 'gift-outline', // A new icon for getting a reward!
+//                     label: 'Get +2',         // New text
+//                     isReward: true           // A flag to apply special styling
+//                 })
+//             )}
+
+//             {/* {renderControlButton({
 //                 onPress: onNewGame,
 //                 disabled: false,
 //                 iconName: 'refresh-cw',
@@ -62,7 +75,7 @@
 //                 disabled: false,
 //                 iconName: 'check-all',
 //                 label: 'Solve'
-//             })}
+//             })} */}
 //         </View>
 //     );
 // };
@@ -71,16 +84,14 @@
 //     controlContainer: {
 //         marginTop: 20,
 //         width: controlPanelWidth,
-//         flexDirection: 'row',       // Arrange buttons horizontally
-//         // --- KEY CHANGE: Removed flexWrap and adjusted justification ---
-//         justifyContent: 'space-around', // Distribute buttons evenly with space around them
-//         alignItems: 'center',       // Align items vertically in the center
+//         flexDirection: 'row',
+//         justifyContent: 'space-around',
+//         alignItems: 'center',
 //     },
 //     controlButton: {
 //         width: cellSize,
 //         height: cellSize,
-//         // Using a smaller margin since space-around adds spacing
-//         marginHorizontal: 2, 
+//         marginHorizontal: 2,
 //         justifyContent: 'center',
 //         alignItems: 'center',
 //         backgroundColor: '#f5f5f5',
@@ -92,16 +103,25 @@
 //         backgroundColor: '#fafafa',
 //         opacity: 0.7,
 //     },
+//     // --- NEW STYLES FOR THE REWARD BUTTON ---
+//     rewardButton: {
+//         backgroundColor: '#e8f5e9', // A nice light green
+//         borderColor: '#4CAF50', // A matching green border
+//     },
 //     controlLabel: {
-//         // --- KEY CHANGE: Made font size slightly smaller to ensure it fits ---
-//         fontSize: cellSize * 0.16, 
+//         fontSize: cellSize * 0.16,
 //         color: '#424242',
 //         fontWeight: '500',
-//         marginTop: 4, // Reduced margin top
-//         textAlign: 'center', // Ensure text like "New Game" centers if it wraps
+//         marginTop: 4,
+//         textAlign: 'center',
 //     },
 //     disabledLabel: {
 //         color: '#b0b0b0',
+//     },
+//     // --- NEW STYLE FOR THE REWARD LABEL ---
+//     rewardLabel: {
+//         color: '#4CAF50',
+//         fontWeight: 'bold',
 //     },
 // });
 
@@ -132,7 +152,7 @@ export const ControlPanel = ({
             onPress={onPress}
             disabled={disabled}
         >
-            <IconComponent name={iconName} size={cellSize * 0.5} color={isReward ? '#4CAF50' : (disabled ? '#b0b0b0' : '#424242')} />
+            <IconComponent name={iconName} size={cellSize * 0.5} color={isReward ? '#059669' : (disabled ? '#9ca3af' : '#374151')} />
             <Text style={[styles.controlLabel, isReward && styles.rewardLabel, disabled && styles.disabledLabel]}>{label}</Text>
         </TouchableOpacity>
     );
@@ -152,8 +172,7 @@ export const ControlPanel = ({
                 label: 'Erase'
             })}
             
-            {/* --- THIS IS THE KEY CHANGE --- */}
-            {/* We now check if hintsLeft is 0. If so, we render a different style of button. */}
+            {/* Check if hints are available or if user needs to watch ad */}
             {hintsLeft > 0 ? (
                 renderControlButton({
                     onPress: onHint,
@@ -163,25 +182,11 @@ export const ControlPanel = ({
             ) : (
                 renderControlButton({
                     onPress: onHint,
-                    iconName: 'gift-outline', // A new icon for getting a reward!
-                    label: 'Get +2',         // New text
-                    isReward: true           // A flag to apply special styling
+                    iconName: 'gift-outline',
+                    label: 'Get +2',
+                    isReward: true
                 })
             )}
-
-            {/* {renderControlButton({
-                onPress: onNewGame,
-                disabled: false,
-                iconName: 'refresh-cw',
-                label: 'New Game',
-                IconComponent: Feather
-            })}
-            {renderControlButton({
-                onPress: onSolve,
-                disabled: false,
-                iconName: 'check-all',
-                label: 'Solve'
-            })} */}
         </View>
     );
 };
@@ -189,6 +194,7 @@ export const ControlPanel = ({
 const styles = StyleSheet.create({
     controlContainer: {
         marginTop: 20,
+        marginBottom: 10,
         width: controlPanelWidth,
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -200,33 +206,39 @@ const styles = StyleSheet.create({
         marginHorizontal: 2,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-        borderRadius: 8,
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#e0e0e0',
+        borderColor: '#d1d5db',
+        borderBottomWidth: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
     },
     disabledButton: {
-        backgroundColor: '#fafafa',
-        opacity: 0.7,
+        backgroundColor: '#f5f5f5',
+        opacity: 0.5,
+        borderColor: '#e5e5e7',
     },
-    // --- NEW STYLES FOR THE REWARD BUTTON ---
     rewardButton: {
-        backgroundColor: '#e8f5e9', // A nice light green
-        borderColor: '#4CAF50', // A matching green border
+        backgroundColor: '#d1fae5',
+        borderColor: '#10b981',
+        borderBottomColor: '#059669',
     },
     controlLabel: {
         fontSize: cellSize * 0.16,
-        color: '#424242',
-        fontWeight: '500',
+        color: '#374151',
+        fontWeight: '600',
         marginTop: 4,
         textAlign: 'center',
     },
     disabledLabel: {
-        color: '#b0b0b0',
+        color: '#9ca3af',
     },
-    // --- NEW STYLE FOR THE REWARD LABEL ---
     rewardLabel: {
-        color: '#4CAF50',
-        fontWeight: 'bold',
+        color: '#059669',
+        fontWeight: '700',
     },
 });
